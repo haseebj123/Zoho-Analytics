@@ -159,3 +159,22 @@ Use query 04 when you need brand-level totals (e.g. total ENVO spend per week re
 - All week keys use ISO week numbering anchored to **Monday** via the Zoho Analytics function `start_date_current_week(date, 2)`.
 - Queries are filtered to weeks `<= current week` to prevent future placeholder rows from appearing in dashboards.
 - The `SO Channel Old` column preserves the original legacy `if()` chain for backwards compatibility; `Channel` (CASE-based) is the canonical value used for all joins.
+
+---
+
+## Voice KPI Reports
+
+Agent performance reports built in the **Zoho Voice Analytics** workspace. See [`voice-kpi/`](voice-kpi/) for full documentation.
+
+| Report | View ID | Description |
+|--------|---------|-------------|
+| [KPI Voice Call Pickup by Agent](voice-kpi/01_kpi_voice_call_pickup_by_agent.md) | `2350577000030633734` | Pickup rate per agent broken down by outcome (answered / agent miss / tech fail / customer cancel / lose race) |
+| [KPI Voice Missed Call Callback Tracker](voice-kpi/02_kpi_voice_missed_call_callback_tracker.md) | `2350577000030645441` | Per missed call: which agent called back and how many minutes it took |
+
+### Supporting Query Tables
+
+| Table | View ID | Description |
+|-------|---------|-------------|
+| `KPI Voice Call Log` | `2350577000030636652` | Deduplicated incoming/missed calls per agent with 1/0 outcome flags |
+| `KPI Voice Outgoing Each` | `2350577000030642916` | One row per outgoing call with customer number and agent name |
+| `KPI Voice Missed Callback` | `2350577000030634199` | Cross-join of missed calls × outgoing calls for callback time calculation |
