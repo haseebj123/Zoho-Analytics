@@ -8,8 +8,67 @@ For every missed inbound call, shows whether the customer was called back, how m
 
 ## Views
 
+### Query Table 0: `KPI Voice Outgoing Agent Map`
+**View ID:** `2350577000030853035`
+
+Pre-expands the `AgentMetrics` outgoing rows by duplicating each row at 11 different timestamps (the original `Agent Called Time` plus offsets of 1 through 10 seconds). This allows a downstream equality JOIN on `StartTime` to match even when the two systems record the same call with a slight timestamp difference.
+
+#### SQL
+```sql
+SELECT sub.out_time, sub.agent_name FROM (
+  SELECT a.`Agent Called Time` AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 1 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 2 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 3 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 4 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 5 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 6 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 7 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 8 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 9 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+  UNION ALL
+  SELECT DATE_ADD(a.`Agent Called Time`, INTERVAL 10 SECOND) AS out_time, ag.`Name` AS agent_name
+  FROM `AgentMetrics` a LEFT JOIN `Agents` ag ON a.`Agent` = ag.`AgentId`
+  WHERE a.`CallType` = 'outgoing' AND a.`Agent` IS NOT NULL AND a.`Agent` != ''
+) sub
+```
+
+#### Why 11 UNION ALL branches (INTERVAL 0 through INTERVAL 10 SECOND)?
+`AgentMetrics.Agent Called Time` is consistently recorded a few seconds **before** `CallLogs.StartTime` for the same outgoing call. The offset is not fixed — it varies from 1 to 8+ seconds depending on the call. Zoho Analytics does not support inequality JOIN conditions (`>`, `<`, `BETWEEN`) — attempting them produces error 7410. A range-based join is therefore impossible. The workaround is to pre-expand each agent row into 11 copies, each shifted by one additional second (0–10), so that an equality JOIN on `StartTime` can match whichever offset applies to a given call.
+
+---
+
 ### Query Table 1: `KPI Voice Outgoing Each`
-**View ID:** `2350577000030642916`
+**View ID:** `2350577000030851132`
 
 One row per outgoing call with the customer number and agent name. Used as the outbound callback lookup source.
 
@@ -67,7 +126,7 @@ A missed call is "returned" not only when an agent calls the customer back outbo
 ---
 
 ### Query Table 3: `KPI Voice Missed Callback`
-**View ID:** `2350577000030855004`
+**View ID:** `2350577000030851246`
 
 Cross-joins each missed call against every outgoing call AND every answered incoming call to the same customer number. `mins_to_callback` is NULL when the matching call occurred before the missed call, and a positive integer when it occurred after. A `call_direction` column distinguishes whether the callback was outbound (agent called the customer) or inbound (customer called back and was answered). The summary table uses `MIN(mins_to_callback)` to find the time to first callback after each specific miss.
 
@@ -128,7 +187,7 @@ Zoho Analytics query tables do not support `>` or `<` operators in JOIN conditio
 ---
 
 ### Query Table 4: `KPI Voice Callback Summary`
-**View ID:** `2350577000030846003`
+**View ID:** `2350577000030846189`
 
 Collapses the `KPI Voice Missed Callback` cross-join back to one row per missed call. `MIN(mins_to_callback)` gives the time to the first callback. `GROUP_CONCAT` produces a combined `all_agents` string that prefixes `incoming: ` for any agent who answered a customer-initiated callback, so the direction is visible in the final pivot.
 
@@ -175,7 +234,7 @@ Agents listed without a prefix called the customer outbound. Agents prefixed wit
 ---
 
 ### Pivot Report: `KPI Voice Missed Call Callback Tracker`
-**View ID:** `2350577000030855225`
+**View ID:** `2350577000030857010`
 **Base Table:** `KPI Voice Callback Summary`
 
 | Axis | Column | Operation |
@@ -234,3 +293,13 @@ KPI Voice Outgoing Each    KPI Voice Incoming Answered Each
          Pivot: MIN(mins_to_callback), all_agents
          = minutes to first callback + who handled it
 ```
+
+## Known Issues / Design Decisions
+
+### Timestamp offset between AgentMetrics and CallLogs for outgoing calls
+
+`AgentMetrics.Agent Called Time` is consistently recorded a few seconds **before** `CallLogs.StartTime` for the same outgoing call. The offset is not fixed — the observed range is 1–8+ seconds and varies per call. This means a simple equality JOIN between `AgentMetrics.Agent Called Time` and `CallLogs.StartTime` will miss most outgoing calls entirely.
+
+Zoho Analytics does not support inequality JOIN conditions (`>`, `<`, `BETWEEN`) in query tables — attempting them returns error 7410. A range-based join (e.g. `JOIN ON StartTime BETWEEN Agent Called Time AND DATE_ADD(Agent Called Time, INTERVAL 10 SECOND)`) is therefore impossible.
+
+**Workaround — pre-expand with UNION ALL:** The `KPI Voice Outgoing Agent Map` query table duplicates every outgoing agent row 11 times, once at the original `Agent Called Time` and once more for each additional second from +1 through +10. This means that for any given call, at least one of those 11 rows will have an `out_time` that matches `CallLogs.StartTime` exactly, allowing the downstream equality JOIN to succeed regardless of which specific offset applies to that call.
