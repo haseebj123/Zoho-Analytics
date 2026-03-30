@@ -7,17 +7,18 @@ Reports built in the **Zoho Voice Analytics** workspace (`2350577000025614008`) 
 | File | Report Name | View ID | Description |
 |------|-------------|---------|-------------|
 | [01_kpi_voice_call_pickup_by_agent.md](01_kpi_voice_call_pickup_by_agent.md) | KPI Voice Call Pickup by Agent | `2350577000030633734` | Pickup rate per agent broken down by outcome category |
-| [02_kpi_voice_missed_call_callback_tracker.md](02_kpi_voice_missed_call_callback_tracker.md) | KPI Voice Missed Call Callback Tracker | `2350577000030855225` | Per missed call: who called back and how long it took |
+| [02_kpi_voice_missed_call_callback_tracker.md](02_kpi_voice_missed_call_callback_tracker.md) | KPI Voice Missed Call Callback Tracker | `2350577000030857010` | Per missed call: who called back and how long it took |
 
 ## Supporting Query Tables
 
 | Table Name | View ID | Used By |
 |------------|---------|---------|
 | `KPI Voice Call Log` | `2350577000030636652` | Call Pickup report |
-| `KPI Voice Outgoing Each` | `2350577000030642916` | Callback Tracker |
+| `KPI Voice Outgoing Agent Map` | `2350577000030853035` | Callback Tracker |
+| `KPI Voice Outgoing Each` | `2350577000030851132` | Callback Tracker |
 | `KPI Voice Incoming Answered Each` | `2350577000030860002` | Callback Tracker |
-| `KPI Voice Missed Callback` | `2350577000030855004` | Callback Tracker |
-| `KPI Voice Callback Summary` | `2350577000030846003` | Callback Tracker |
+| `KPI Voice Missed Callback` | `2350577000030851246` | Callback Tracker |
+| `KPI Voice Callback Summary` | `2350577000030846189` | Callback Tracker |
 
 ## Source Tables (Zoho Voice sync)
 
@@ -34,3 +35,4 @@ Reports built in the **Zoho Voice Analytics** workspace (`2350577000025614008`) 
 - Zoho Analytics query tables do not support JOIN inequality conditions (`>`, `<`) — use `CASE WHEN` in SELECT
 - Columns from subquery-based query tables are prefixed with `sub.` (e.g. `sub.agent_name`)
 - User filters on datetime columns only support `year` operation — `between`, `month`, `date_range` are not supported
+- `AgentMetrics.Agent Called Time` is recorded 1–8+ seconds before `CallLogs.StartTime` for outgoing calls — equality JOIN requires pre-expanding rows with UNION ALL offsets (see `KPI Voice Outgoing Agent Map`)
