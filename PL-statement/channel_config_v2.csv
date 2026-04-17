@@ -1,0 +1,101 @@
+Type,Key,Channel,Value,Description
+salesperson,1.97995E+18,B2B,,Mitch Merker - Sales rep for B2B dealer accounts. Add new B2B sales reps here with Channel=B2B.
+salesperson,1.97995E+18,B2B,,Serge Giguere - Sales rep for B2B dealer accounts (Quebec). Add new B2B sales reps here with Channel=B2B.
+salesperson,1.97995E+18,Costco,,Costco Online - Salesperson assigned to Costco.ca online orders. Add new Costco salesperson IDs here.
+salesperson,1.97995E+18,Costco,,Costco RoadShow - Salesperson assigned to Costco in-store roadshow events. Any salesperson NOT listed here defaults to Retail.
+vendor,1.97995E+18,Retail,,Rolls Right Industries Ltd. - Fulfillment/freight vendor. Add vendors here whose COGS bills should go 100% to a specific channel.
+vendor,1.97995E+18,Retail,,Canpar Express - Canadian courier for retail order deliveries.
+vendor,1.97995E+18,Retail,,Han-Lin Yong - Assembly labour contractor (retail operations).
+vendor,1.97995E+18,Retail,,City Business Brokerage LLC - Customs broker for Moonbike USA imports (retail this year).
+vendor,1.97995E+18,Retail,,Worldwide Express GlobalTranz and Unishippers - US warehouse outbound freight (retail US orders).
+vendor,1.97995E+18,Retail,,Hammad Mansoor - Assembly labour contractor (retail operations).
+vendor,1.97995E+18,Retail,,Bloom - Assembly labour and delivery contractor (retail operations).
+vendor,1.97995E+18,Retail,,Jason Avenido - Assembly labour contractor (retail operations).
+vendor,1.97995E+18,Retail,,David Burnett - Assembly labour contractor (retail operations).
+vendor,1.97995E+18,Retail,,Denis Charlebois - Assembly labour contractor (retail operations).
+vendor,1.97995E+18,Retail,,Amir Hossein Qaidzadeh - Assembly labour contractor (retail operations).
+costco_account,Discount - Costco Sales,Costco,,Costco promotional discount journals. Any transaction hitting this account with no invoice/credit note match is tagged Costco.
+costco_account,Shipping Freight -Costco,Costco,,Costco-specific inbound freight. Tagged Costco when no invoice match.
+costco_account,Cost of Labour - Costco,Costco,,Labour costs specific to Costco operations. Tagged Costco when no invoice match.
+costco_account,Sales of Product Income Costco,Costco,,Revenue from Costco-specific SKUs. Only tagged Costco when no invoice match (invoice-matched ones use salesperson logic).
+costco_account,Cost of Goods Sold Costco,Costco,,COGS for Costco-specific products. Only tagged Costco when no invoice match.
+costco_account,Other Charges -Shipping Discount,Costco,,Shipping discount reclassification journals. These are the credit side of Costco discount journal entries.
+so_prefix,89400,Costco,7,Costco Sales Order prefix. When an invoice has no salesperson and the SO# starts with this prefix (first 7 chars) it is tagged Costco.
+so_prefix,SO-EB-,Retail,6,eBike BC Sales Order prefix. When an invoice has no salesperson and the SO# starts with this prefix (first 6 chars) it is tagged Retail.
+so_prefix,SO-MB-,Retail,6,Moonbike Sales Order prefix. When an invoice has no salesperson and the SO# starts with this prefix (first 6 chars) it is tagged Retail.
+default_channel,blank_sp_invoice,B2B,,Fallback: invoices with no salesperson and no matching SO prefix are assumed to be B2B dealer orders.
+default_channel,blank_sp_creditnote,Retail,,Fallback: credit notes with no salesperson are assumed to be individual retail customer returns.
+default_channel,other_sp,Retail,,Fallback: invoices with a salesperson NOT listed in the salesperson section above default to Retail.
+payroll_pct,Payroll Expense,B2B,0.306944,Payroll channel split derived from Payroll Allocation.xlsx. B2B weight = 1105 out of 3600 total. Update Value when employee allocation changes.
+payroll_pct,Payroll Expense,Retail,0.365278,Retail weight = 1315 out of 3600 total.
+payroll_pct,Payroll Expense,Costco,0.077778,Costco weight = 280 out of 3600 total.
+payroll_pct,Payroll Expense,Unallocated,0.25,Unallocated = 9 employees with no channel assignment (900 out of 3600). All four channel Values must sum to 1.0.
+payroll_pct,Payroll Expense:Taxes,B2B,0.306944,Same split as Payroll Expense. Update all payroll accounts together when allocation changes.
+payroll_pct,Payroll Expense:Taxes,Retail,0.365278,
+payroll_pct,Payroll Expense:Taxes,Costco,0.077778,
+payroll_pct,Payroll Expense:Taxes,Unallocated,0.25,
+payroll_pct,Payroll Expense:Wages,B2B,0.306944,Same split as Payroll Expense.
+payroll_pct,Payroll Expense:Wages,Retail,0.365278,
+payroll_pct,Payroll Expense:Wages,Costco,0.077778,
+payroll_pct,Payroll Expense:Wages,Unallocated,0.25,
+payroll_pct,Salaries and Employee Wages,B2B,0.306944,Same split as Payroll Expense.
+payroll_pct,Salaries and Employee Wages,Retail,0.365278,
+payroll_pct,Salaries and Employee Wages,Costco,0.077778,
+payroll_pct,Salaries and Employee Wages,Unallocated,0.25,
+payroll_pct,EHT Expense,B2B,0.306944,Employer Health Tax - same split as Payroll Expense.
+payroll_pct,EHT Expense,Retail,0.365278,
+payroll_pct,EHT Expense,Costco,0.077778,
+payroll_pct,EHT Expense,Unallocated,0.25,
+payroll_pct,Work Safe BC Expense,B2B,0.306944,WorkSafe BC insurance - same split as Payroll Expense.
+payroll_pct,Work Safe BC Expense,Retail,0.365278,
+payroll_pct,Work Safe BC Expense,Costco,0.077778,
+payroll_pct,Work Safe BC Expense,Unallocated,0.25,
+payroll_pct,Payroll-SRED Wages Reimbursement,B2B,0.306944,SRED wage reimbursement - same split as Payroll Expense.
+payroll_pct,Payroll-SRED Wages Reimbursement,Retail,0.365278,
+payroll_pct,Payroll-SRED Wages Reimbursement,Costco,0.077778,
+payroll_pct,Payroll-SRED Wages Reimbursement,Unallocated,0.25,
+ad_pct,Advertising,B2B,0.1,Advertising split: 10% B2B / 90% Retail. Costco gets no advertising allocation. Values per account must sum to 1.0.
+ad_pct,Advertising,Retail,0.9,
+ad_pct,Advertising And Marketing,B2B,0.1,Same split as Advertising.
+ad_pct,Advertising And Marketing,Retail,0.9,
+ad_pct,Promotional,B2B,0.1,Same split as Advertising.
+ad_pct,Promotional,Retail,0.9,
+payment_account,Stripe Fee,Retail,1,Payment processing fees go 100% to Retail. To split across channels change Channel and Value (e.g. add B2B/0.3 and change Retail to 0.7).
+payment_account,Stripe Fees,Retail,1,
+payment_account,Stripe Fees  US $,Retail,1,Note: two spaces before US.
+payment_account,Card Fee,Retail,1,
+payment_account,Paypal charges,Retail,1,
+payment_account,QuickBooks Payments Fees,Retail,1,
+payment_account,QuickBooks Payments Fees ( 71 ),Retail,1,
+payment_account,Shipearly Fee,Retail,1,
+payment_account,Shopify Fee,Retail,1,
+payment_account,PayPlan Fee,Retail,1,
+payment_account,Amazon Fee charges,Retail,1,
+unalloc_opex,Exchange Gain or Loss,Unallocated,,OpEx accounts that stay 100% Unallocated (no channel split). Add new accounts here to keep them out of the channel allocation.
+unalloc_opex,Payroll-IRAP -WSBC - BCTech -ECO Wages Reimbursement,Unallocated,,IRAP grant reimbursement - kept Unallocated as it offsets R&D costs not tied to a channel.
+unalloc_opex,Payroll-IRAP Wages Reimbursement,Unallocated,,IRAP wage reimbursement - kept Unallocated as it offsets R&D costs not tied to a channel.
+unalloc_other_exp,SRED - Flex UL,Unallocated,,Non-operating expense accounts that stay 100% Unallocated. These are R&D tax credits and grants and compliance items.
+unalloc_other_exp,SRED - MUCEB - MTB,Unallocated,,SRED project account.
+unalloc_other_exp,SRED -CLESV,Unallocated,,SRED project account.
+unalloc_other_exp,SRED -Snow track,Unallocated,,SRED project account.
+unalloc_other_exp,SRED- ATMP,Unallocated,,SRED project account.
+unalloc_other_exp,SRED- Snowbike kit,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-ATV,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-CEBP,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-Hydrofoil Electric Water Mobility,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-IOT,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-Light -e- Mobility Enclosure,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-VEEMO,Unallocated,,SRED project account.
+unalloc_other_exp,SRED-eCity Bike,Unallocated,,SRED project account.
+unalloc_other_exp,CanExport,Unallocated,,Government export grant - not channel-specific.
+unalloc_other_exp,Security,Unallocated,,Security expense - not channel-specific.
+unalloc_other_exp,Exchange,Unallocated,,Foreign exchange gains/losses - not channel-specific.
+unalloc_other_exp,IRAP - B.I,Unallocated,,IRAP grant project account.
+unalloc_other_exp,IRAP - General,Unallocated,,IRAP grant project account.
+unalloc_other_exp,IRAP - eATV,Unallocated,,IRAP grant project account.
+unalloc_other_exp,Amortization,Unallocated,,Asset amortization - not channel-specific.
+unalloc_other_exp,Provisions for Income Tax,Unallocated,,Tax provision - not channel-specific.
+unalloc_other_exp,Penalties and settlements,Unallocated,,Legal/regulatory penalties - not channel-specific.
+unalloc_other_exp,Reconciliation Discrepancies,Unallocated,,Accounting reconciliation adjustments - not channel-specific.
+cogs_unalloc,Subcontractors - COGS,Unallocated,,Subcontractor COGS (Adam Nunn) kept Unallocated. Key = account name. To assign to a channel change Channel column.
+cogs_unalloc,inventory_adjustment_by_quantity,Unallocated,,Inventory stock count adjustments. Key = entity type (not account name). Kept Unallocated as adjustments are not channel-specific.
